@@ -5,11 +5,21 @@ import java.util.Scanner;
 public class battlefield {
 
     public static void main(String[] args) {
+        String[] boats = new String[] {"Aircraft Carrier", "Battleship", "Submarine", "Cruiser", "Destroyer"};
         String[][] board = createBoard();
         printBoard(board);
-        StringBuilder[] coordinates = getBoatCoordinates();
-        int length = getLength(coordinates);
-        getParts(coordinates, length);
+        for (int i = 5; i > 1; i--) {
+            System.out.println("Enter the coordinates of the " + boats[i - 1] + " " + "(" + i + " cells):");
+            StringBuilder[] coordinates = getBoatCoordinates();
+            int length = getLength(coordinates);
+            if (length != i) {
+                System.out.println("Error! Wrong length of the Submarine! Try again:");
+                i += 1;
+                continue;
+            } else {
+                updateBoard(board, coordinates);
+            }
+        }
     }
     private static String[][] createBoard() {
         String[][] board = new String[10][10];
@@ -37,6 +47,7 @@ public class battlefield {
             }
             System.out.println();
         }
+        System.out.println();
 
     }
 
@@ -49,7 +60,6 @@ public class battlefield {
 
         //Make a loop that keeps prompting for coordinates if the input given is not valid
         while (!valid) {
-            System.out.println("Enter the coordinates of the ship (start and end):");
             firstCoords.append(scanner.next());
             secondCoords.append(scanner.next());
 
@@ -86,7 +96,7 @@ public class battlefield {
         return coordinates;
     }
 
-    public static int getLength(StringBuilder[] coordinates) {
+    private static int getLength(StringBuilder[] coordinates) {
         int length = 0;
         String rowFirst = String.valueOf(coordinates[0].charAt(0));
         String rowSecond = String.valueOf(coordinates[1].charAt(0));
@@ -104,7 +114,7 @@ public class battlefield {
         return length;
     }
 
-    public static void getParts(StringBuilder[] coordinates, int length) {
+    private static void getParts(StringBuilder[] coordinates, int length) {
         String rowFirst = String.valueOf(coordinates[0].charAt(0));
         String rowSecond = String.valueOf(coordinates[1].charAt(0));
         String colFirst = String.valueOf(coordinates[0].substring(1,coordinates[0].length()));
@@ -126,5 +136,9 @@ public class battlefield {
                 System.out.print(rowLetter + colFirst + " ");
             }
         }
+    }
+
+    private static void updateBoard(String[][] board, StringBuilder[] coordinates) {
+        
     }
 }
