@@ -66,17 +66,35 @@ public class battlefield {
 
             if (validRows.contains(rowFirst) && validRows.contains(rowSecond) && colFirst.matches("[1-9]|10") &&
             colSecond.matches("[1-9]|10")) {
+                //check for horizontal positioning
                 if (rowFirst.equals(rowSecond) && !colFirst.equals(colSecond)) {
-                     int sum = Math.abs(Integer.parseInt(colFirst) - Integer.parseInt(colSecond)) + 1;
-                     System.out.println("Length: " + sum);
-                     valid = true;
-                } else if (colFirst.equals(colSecond) && !rowFirst.equals(rowSecond)) {
+                    int sum = Math.abs(Integer.parseInt(colFirst) - Integer.parseInt(colSecond)) + 1;
+                    System.out.println("Length: " + sum);
+                    //print out the parts of the ship
+                    System.out.print("Parts: ");
+                    for (int i = 0; i < sum;i ++) {
+                        int columnNumber = Math.max(Integer.parseInt(colFirst), Integer.parseInt(colSecond)) - i;
+                        System.out.print(rowFirst + columnNumber + " ");
+                    }
+                    //end the validation loop
+                    valid = true;
+                } else if (colFirst.equals(colSecond) && !rowFirst.equals(rowSecond)) { //check for horizontal positioning
+                    //get the length by subtracting the value of the rows as a char
                     int sum = Math.abs(firstCoords.charAt(0) - secondCoords.charAt(0)) + 1;
                     System.out.println("Length: " + sum);
+                    //print out the parts of the ship
+                    System.out.print("Parts: ");
+                    for (int i = 0; i < sum;i ++) {
+                        char rowLetter= (char) (Math.max(firstCoords.charAt(0), secondCoords.charAt(0)) - i);
+                        System.out.print(rowLetter + colFirst + " ");
+                    }
+                    //end the validation loop
                     valid = true;
+                } else {
+                    System.out.println("Error! \n");
                 }
             } else {
-                System.out.println("Error: The coordinates have to be between [A-J] and [1-10]!");
+                System.out.println("Error: The coordinates have to be between [A-J] and [1-10]!\n");
             }
 
 
