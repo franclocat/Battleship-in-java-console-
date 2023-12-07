@@ -7,7 +7,9 @@ public class battlefield {
     public static void main(String[] args) {
         String[][] board = createBoard();
         printBoard(board);
-        getBoatCoordinates();
+        StringBuilder[] coordinates = getBoatCoordinates();
+        int length = getLength(coordinates);
+        getParts(coordinates, length);
     }
     private static String[][] createBoard() {
         String[][] board = new String[10][10];
@@ -38,11 +40,12 @@ public class battlefield {
 
     }
 
-    private static StringBuilder getBoatCoordinates() throws NullPointerException{
+    private static StringBuilder[] getBoatCoordinates() throws NullPointerException{
         Scanner scanner = new Scanner(System.in);
         boolean valid = false;
         StringBuilder firstCoords = new StringBuilder();
         StringBuilder secondCoords = new StringBuilder();
+        StringBuilder[] coordinates = new StringBuilder[] {firstCoords,secondCoords};
 
         //Make a loop that keeps prompting for coordinates if the input given is not valid
         while (!valid) {
@@ -68,27 +71,8 @@ public class battlefield {
             colSecond.matches("[1-9]|10")) {
                 //check for horizontal positioning
                 if (rowFirst.equals(rowSecond) && !colFirst.equals(colSecond)) {
-                    int sum = Math.abs(Integer.parseInt(colFirst) - Integer.parseInt(colSecond)) + 1;
-                    System.out.println("Length: " + sum);
-                    //print out the parts of the ship
-                    System.out.print("Parts: ");
-                    for (int i = 0; i < sum;i ++) {
-                        int columnNumber = Math.max(Integer.parseInt(colFirst), Integer.parseInt(colSecond)) - i;
-                        System.out.print(rowFirst + columnNumber + " ");
-                    }
-                    //end the validation loop
                     valid = true;
                 } else if (colFirst.equals(colSecond) && !rowFirst.equals(rowSecond)) { //check for horizontal positioning
-                    //get the length by subtracting the value of the rows as a char
-                    int sum = Math.abs(firstCoords.charAt(0) - secondCoords.charAt(0)) + 1;
-                    System.out.println("Length: " + sum);
-                    //print out the parts of the ship
-                    System.out.print("Parts: ");
-                    for (int i = 0; i < sum;i ++) {
-                        char rowLetter= (char) (Math.max(firstCoords.charAt(0), secondCoords.charAt(0)) - i);
-                        System.out.print(rowLetter + colFirst + " ");
-                    }
-                    //end the validation loop
                     valid = true;
                 } else {
                     System.out.println("Error! \n");
@@ -99,7 +83,48 @@ public class battlefield {
 
 
         }
-        return firstCoords;
+        return coordinates;
     }
 
+    public static int getLength(StringBuilder[] coordinates) {
+        int length = 0;
+        String rowFirst = String.valueOf(coordinates[0].charAt(0));
+        String rowSecond = String.valueOf(coordinates[1].charAt(0));
+        String colFirst = String.valueOf(coordinates[0].substring(1,coordinates[0].length()));
+        String colSecond = String.valueOf(coordinates[1].substring(1,coordinates[1].length()));
+
+        if (rowFirst.equals(rowSecond) && !colFirst.equals(colSecond)) {
+            length = Math.abs(Integer.parseInt(colFirst) - Integer.parseInt(colSecond)) + 1;
+            System.out.println("Length: " + length);
+        } else if (colFirst.equals(colSecond) && !rowFirst.equals(rowSecond)) { //check for horizontal positioning
+            // get the length by subtracting the value of the rows as a char
+            length = Math.abs(coordinates[0].charAt(0) - coordinates[1].charAt(0)) + 1;
+            System.out.println("Length: " + length);
+        }
+        return length;
+    }
+
+    public static void getParts(StringBuilder[] coordinates, int length) {
+        String rowFirst = String.valueOf(coordinates[0].charAt(0));
+        String rowSecond = String.valueOf(coordinates[1].charAt(0));
+        String colFirst = String.valueOf(coordinates[0].substring(1,coordinates[0].length()));
+        String colSecond = String.valueOf(coordinates[1].substring(1,coordinates[1].length()));
+
+        if (rowFirst.equals(rowSecond) && !colFirst.equals(colSecond)) {
+            System.out.print("Parts: ");
+            int sum = Math.abs(Integer.parseInt(colFirst) - Integer.parseInt(colSecond)) + 1;
+            for (int i = 0; i < sum; i++) {
+                int columnNumber = Math.max(Integer.parseInt(colFirst), Integer.parseInt(colSecond)) - i;
+                System.out.print(rowFirst + columnNumber + " ");
+            }
+        } else if (colFirst.equals(colSecond) && !rowFirst.equals(rowSecond)) { //check for horizontal positioning
+            int sum = Math.abs(coordinates[0].charAt(0) - coordinates[1].charAt(0)) + 1;
+            //print out the parts of the ship
+            System.out.print("Parts: ");
+            for (int i = 0; i < sum; i++) {
+                char rowLetter = (char) (Math.max(coordinates[0].charAt(0), coordinates[1].charAt(0)) - i);
+                System.out.print(rowLetter + colFirst + " ");
+            }
+        }
+    }
 }
