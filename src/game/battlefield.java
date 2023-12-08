@@ -9,7 +9,8 @@ public class battlefield {
         String[][] board = createBoard();
         printBoard(board);
         for (int i = 5; i > 1; i--) {
-            System.out.println("Enter the coordinates of the " + boats[i - 1] + " " + "(" + i + " cells):");
+            System.out.println("Enter the coordinates of the " + boats[i - 1] + " " + "(" + i + " cells):"); /*print the
+             type of boats by using the index of the list and print teh amount of cells needed*/
             StringBuilder[] coordinates = getBoatCoordinates();
             int length = getLength(coordinates);
             if (length != i) {
@@ -17,7 +18,8 @@ public class battlefield {
                 i += 1;
                 continue;
             } else {
-                updateBoard(board, coordinates);
+                board = updateBoard(board, coordinates, length);
+                printBoard(board);
             }
         }
     }
@@ -98,15 +100,15 @@ public class battlefield {
 
     private static int getLength(StringBuilder[] coordinates) {
         int length = 0;
-        String rowFirst = String.valueOf(coordinates[0].charAt(0));
-        String rowSecond = String.valueOf(coordinates[1].charAt(0));
-        String colFirst = String.valueOf(coordinates[0].substring(1,coordinates[0].length()));
-        String colSecond = String.valueOf(coordinates[1].substring(1,coordinates[1].length()));
+        String rowFirstCoordinate = String.valueOf(coordinates[0].charAt(0));
+        String rowSecondCoordinate = String.valueOf(coordinates[1].charAt(0));
+        String columnFirstCoordinate= String.valueOf(coordinates[0].substring(1,coordinates[0].length()));
+        String columnSecondCoordinte = String.valueOf(coordinates[1].substring(1,coordinates[1].length()));
 
-        if (rowFirst.equals(rowSecond) && !colFirst.equals(colSecond)) {
-            length = Math.abs(Integer.parseInt(colFirst) - Integer.parseInt(colSecond)) + 1;
+        if (rowFirstCoordinate.equals(rowSecondCoordinate) && !columnFirstCoordinate.equals(columnSecondCoordinte)) {
+            length = Math.abs(Integer.parseInt(columnFirstCoordinate) - Integer.parseInt(columnSecondCoordinte)) + 1;
             System.out.println("Length: " + length);
-        } else if (colFirst.equals(colSecond) && !rowFirst.equals(rowSecond)) { //check for horizontal positioning
+        } else if (columnFirstCoordinate.equals(columnSecondCoordinte) && !rowFirstCoordinate.equals(rowSecondCoordinate)) { //check for horizontal positioning
             // get the length by subtracting the value of the rows as a char
             length = Math.abs(coordinates[0].charAt(0) - coordinates[1].charAt(0)) + 1;
             System.out.println("Length: " + length);
@@ -114,31 +116,45 @@ public class battlefield {
         return length;
     }
 
-    private static void getParts(StringBuilder[] coordinates, int length) {
-        String rowFirst = String.valueOf(coordinates[0].charAt(0));
-        String rowSecond = String.valueOf(coordinates[1].charAt(0));
-        String colFirst = String.valueOf(coordinates[0].substring(1,coordinates[0].length()));
-        String colSecond = String.valueOf(coordinates[1].substring(1,coordinates[1].length()));
+    /*private static void getParts(StringBuilder[] coordinates, int length) {
+        String rowFirstCoordinate = String.valueOf(coordinates[0].charAt(0));
+        String rowSecondCoordinate = String.valueOf(coordinates[1].charAt(0));
+        String columnFirstCoordinate = String.valueOf(coordinates[0].substring(1,coordinates[0].length()));
+        String columnSecondCoordinate = String.valueOf(coordinates[1].substring(1,coordinates[1].length()));
 
-        if (rowFirst.equals(rowSecond) && !colFirst.equals(colSecond)) {
+        if (rowFirstCoordinate.equals(rowSecondCoordinate) && !columnFirstCoordinate.equals(columnSecondCoordinate)) {
             System.out.print("Parts: ");
-            int sum = Math.abs(Integer.parseInt(colFirst) - Integer.parseInt(colSecond)) + 1;
+            int sum = Math.abs(Integer.parseInt(columnFirstCoordinate) - Integer.parseInt(columnSecondCoordinate)) + 1;
             for (int i = 0; i < sum; i++) {
-                int columnNumber = Math.max(Integer.parseInt(colFirst), Integer.parseInt(colSecond)) - i;
-                System.out.print(rowFirst + columnNumber + " ");
+                int columnNumber = Math.max(Integer.parseInt(columnFirstCoordinate), Integer.parseInt(columnSecondCoordinate)) - i;
+                System.out.print(rowFirstCoordinate + columnNumber + " ");
             }
-        } else if (colFirst.equals(colSecond) && !rowFirst.equals(rowSecond)) { //check for horizontal positioning
+        } else if (columnFirstCoordinate.equals(columnSecondCoordinate) && !rowFirstCoordinate.equals(rowSecondCoordinate)) { //check for horizontal positioning
             int sum = Math.abs(coordinates[0].charAt(0) - coordinates[1].charAt(0)) + 1;
             //print out the parts of the ship
             System.out.print("Parts: ");
             for (int i = 0; i < sum; i++) {
                 char rowLetter = (char) (Math.max(coordinates[0].charAt(0), coordinates[1].charAt(0)) - i);
-                System.out.print(rowLetter + colFirst + " ");
+                System.out.print(rowLetter + columnFirstCoordinate + " ");
             }
         }
-    }
+    }*/
 
-    private static void updateBoard(String[][] board, StringBuilder[] coordinates) {
-        
+    private static String[][] updateBoard(String[][] board, StringBuilder[] coordinates, int length) {
+        int rowFirstCoordinate = (int) coordinates[0].charAt(0) % 65;
+        int rowSecondCoordinate = (int) coordinates[1].charAt(0) % 65;
+        int columnFirstCoordinate = Integer.parseInt(coordinates[0].substring(1,coordinates[0].length()));
+        int columnSecondCoordinate = Integer.parseInt(coordinates[1].substring(1,coordinates[1].length()));
+
+        if (rowFirstCoordinate == rowSecondCoordinate && columnFirstCoordinate != columnSecondCoordinate) {
+            for (int i = 0; i < length; i++) {
+                board[rowFirstCoordinate][Math.min(columnFirstCoordinate, columnSecondCoordinate) + i - 1] = "O";
+            }
+        } else if (columnFirstCoordinate == columnSecondCoordinate && rowFirstCoordinate != rowSecondCoordinate) { //check for horizontal positioning
+            for (int i = 0; i < length; i++) {
+                board[Math.min(rowFirstCoordinate, rowSecondCoordinate) + i][columnFirstCoordinate - 1] = "O";
+            }
+        }
+        return board;
     }
 }
