@@ -67,7 +67,7 @@ public class battlefield {
 
             //check for a valid length for the input without knowing if the given values are valid
             if (firstCoords.length() < 2 || firstCoords.length() > 3 || secondCoords.length() < 2 || secondCoords.length() > 3) {
-                System.out.println("Error: The input has to look like \"A5 A10\"!\n");
+                System.out.println("Error: The input has to look like \"A5 A10 or A5 B5\"!\n");
                 continue;
             }
             //divide the coordinates in rows and columns for later validation
@@ -90,7 +90,7 @@ public class battlefield {
                     System.out.println("Error! \n");
                 }
             } else {
-                System.out.println("Error: The coordinates have to be between [A-J] and [1-10]!\n");
+                System.out.println("Error! Wrong ship location! Try again:");
             }
 
 
@@ -139,12 +139,12 @@ public class battlefield {
             }
         }
     }*/
-
     private static String[][] updateBoard(String[][] board, StringBuilder[] coordinates, int length) {
         int rowFirstCoordinate = (int) coordinates[0].charAt(0) % 65;
         int rowSecondCoordinate = (int) coordinates[1].charAt(0) % 65;
         int columnFirstCoordinate = Integer.parseInt(coordinates[0].substring(1,coordinates[0].length()));
         int columnSecondCoordinate = Integer.parseInt(coordinates[1].substring(1,coordinates[1].length()));
+        boolean valid = false;
 
         if (rowFirstCoordinate == rowSecondCoordinate && columnFirstCoordinate != columnSecondCoordinate) {
             for (int i = 0; i < length; i++) {
