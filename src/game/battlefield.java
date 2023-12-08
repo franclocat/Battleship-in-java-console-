@@ -5,17 +5,17 @@ import java.util.Scanner;
 public class battlefield {
 
     public static void main(String[] args) {
-        String[] boats = new String[] {"Aircraft Carrier", "Battleship", "Submarine", "Cruiser", "Destroyer"};
+        String[][] boats = new String[][]{{"Aircraft Carrier", "5"}, {"Battleship","4"}, {"Submarine", "3"}, {"Cruiser", "3"}, {"Destroyer", "2"}};
         String[][] board = createBoard();
         printBoard(board);
-        for (int i = 5; i > 1; i--) {
-            System.out.println("Enter the coordinates of the " + boats[i - 1] + " " + "(" + i + " cells):"); /*print the
+        for (int i = 0; i < boats.length; i++) {
+            System.out.println("Enter the coordinates of the " + boats[i][0] + " " + "(" + Integer.parseInt(boats[i][1]) + " cells):"); /*print the
              type of boats by using the index of the list and print teh amount of cells needed*/
             StringBuilder[] coordinates = getBoatCoordinates();
             int length = getLength(coordinates);
-            if (length != i) {
+            if (length != Integer.parseInt(boats[i][1])) {
                 System.out.println("Error! Wrong length of the Submarine! Try again:");
-                i += 1;
+                i -= 1;
                 continue;
             } else {
                 board = updateBoard(board, coordinates, length);
@@ -87,7 +87,7 @@ public class battlefield {
                 } else if (colFirst.equals(colSecond) && !rowFirst.equals(rowSecond)) { //check for horizontal positioning
                     valid = true;
                 } else {
-                    System.out.println("Error! \n");
+                    System.out.println("Error! Wrong ship location! Try again: \n");
                 }
             } else {
                 System.out.println("Error! Wrong ship location! Try again:");
