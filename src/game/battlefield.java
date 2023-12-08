@@ -16,10 +16,14 @@ public class battlefield {
             if (length != Integer.parseInt(boats[i][1])) {
                 System.out.println("Error! Wrong length of the Submarine! Try again:");
                 i -= 1;
-                continue;
             } else {
-                board = updateBoard(board, coordinates, length);
-                printBoard(board);
+                if (!checkForAdjacentShips(board, coordinates, length)) {
+                    String[][] updatedBoard = updateBoard(board, coordinates, length);
+                    printBoard(updatedBoard);
+                } else {
+                    System.out.println("Error! You placed it too close to another one. Try again: \n");
+                    i -= 1;
+                }
             }
         }
     }
@@ -53,28 +57,29 @@ public class battlefield {
 
     }
 
-    private static StringBuilder[] getBoatCoordinates() throws NullPointerException{
+    private static StringBuilder[] getBoatCoordinates() {
         Scanner scanner = new Scanner(System.in);
         boolean valid = false;
-        StringBuilder firstCoords = new StringBuilder();
-        StringBuilder secondCoords = new StringBuilder();
-        StringBuilder[] coordinates = new StringBuilder[] {firstCoords,secondCoords};
+        StringBuilder[] coordinates = new StringBuilder[2];
 
         //Make a loop that keeps prompting for coordinates if the input given is not valid
         while (!valid) {
-            firstCoords.append(scanner.next());
-            secondCoords.append(scanner.next());
+            StringBuilder ShipStartCoordinates = new StringBuilder(scanner.next());
+            StringBuilder ShipEndCoordinates = new StringBuilder(scanner.next());
+            coordinates[0] = ShipStartCoordinates;
+            coordinates[1] = ShipEndCoordinates;
+
 
             //check for a valid length for the input without knowing if the given values are valid
-            if (firstCoords.length() < 2 || firstCoords.length() > 3 || secondCoords.length() < 2 || secondCoords.length() > 3) {
+            if (ShipStartCoordinates.length() < 2 || ShipStartCoordinates.length() > 3 || ShipEndCoordinates.length() < 2 || ShipEndCoordinates.length() > 3) {
                 System.out.println("Error: The input has to look like \"A5 A10 or A5 B5\"!\n");
                 continue;
             }
             //divide the coordinates in rows and columns for later validation
-            String rowFirst = String.valueOf(firstCoords.charAt(0));
-            String rowSecond = String.valueOf(secondCoords.charAt(0));
-            String colFirst = String.valueOf(firstCoords.substring(1,firstCoords.length()));
-            String colSecond = String.valueOf(secondCoords.substring(1,secondCoords.length()));
+            String rowFirst = String.valueOf(ShipStartCoordinates.charAt(0));
+            String rowSecond = String.valueOf(ShipEndCoordinates.charAt(0));
+            String colFirst = String.valueOf(ShipStartCoordinates.substring(1,ShipStartCoordinates.length()));
+            String colSecond = String.valueOf(ShipEndCoordinates.substring(1,ShipEndCoordinates.length()));
 
             //define valid values for rows
             String validRows = "ABCDEFGHIJ";
@@ -100,15 +105,16 @@ public class battlefield {
 
     private static int getLength(StringBuilder[] coordinates) {
         int length = 0;
+        //can be optimized and get deleted by only using coordinates.charAt() comparison
         String rowFirstCoordinate = String.valueOf(coordinates[0].charAt(0));
         String rowSecondCoordinate = String.valueOf(coordinates[1].charAt(0));
         String columnFirstCoordinate= String.valueOf(coordinates[0].substring(1,coordinates[0].length()));
-        String columnSecondCoordinte = String.valueOf(coordinates[1].substring(1,coordinates[1].length()));
-
-        if (rowFirstCoordinate.equals(rowSecondCoordinate) && !columnFirstCoordinate.equals(columnSecondCoordinte)) {
-            length = Math.abs(Integer.parseInt(columnFirstCoordinate) - Integer.parseInt(columnSecondCoordinte)) + 1;
+        String columnSecondCoordinate = String.valueOf(coordinates[1].substring(1,coordinates[1].length()));
+        //
+        if (rowFirstCoordinate.equals(rowSecondCoordinate) && !columnFirstCoordinate.equals(columnSecondCoordinate )) {
+            length = Math.abs(Integer.parseInt(columnFirstCoordinate) - Integer.parseInt(columnSecondCoordinate )) + 1;
             System.out.println("Length: " + length);
-        } else if (columnFirstCoordinate.equals(columnSecondCoordinte) && !rowFirstCoordinate.equals(rowSecondCoordinate)) { //check for horizontal positioning
+        } else if (columnFirstCoordinate.equals(columnSecondCoordinate ) && !rowFirstCoordinate.equals(rowSecondCoordinate)) { //check for horizontal positioning
             // get the length by subtracting the value of the rows as a char
             length = Math.abs(coordinates[0].charAt(0) - coordinates[1].charAt(0)) + 1;
             System.out.println("Length: " + length);
@@ -116,35 +122,11 @@ public class battlefield {
         return length;
     }
 
-    /*private static void getParts(StringBuilder[] coordinates, int length) {
-        String rowFirstCoordinate = String.valueOf(coordinates[0].charAt(0));
-        String rowSecondCoordinate = String.valueOf(coordinates[1].charAt(0));
-        String columnFirstCoordinate = String.valueOf(coordinates[0].substring(1,coordinates[0].length()));
-        String columnSecondCoordinate = String.valueOf(coordinates[1].substring(1,coordinates[1].length()));
-
-        if (rowFirstCoordinate.equals(rowSecondCoordinate) && !columnFirstCoordinate.equals(columnSecondCoordinate)) {
-            System.out.print("Parts: ");
-            int sum = Math.abs(Integer.parseInt(columnFirstCoordinate) - Integer.parseInt(columnSecondCoordinate)) + 1;
-            for (int i = 0; i < sum; i++) {
-                int columnNumber = Math.max(Integer.parseInt(columnFirstCoordinate), Integer.parseInt(columnSecondCoordinate)) - i;
-                System.out.print(rowFirstCoordinate + columnNumber + " ");
-            }
-        } else if (columnFirstCoordinate.equals(columnSecondCoordinate) && !rowFirstCoordinate.equals(rowSecondCoordinate)) { //check for horizontal positioning
-            int sum = Math.abs(coordinates[0].charAt(0) - coordinates[1].charAt(0)) + 1;
-            //print out the parts of the ship
-            System.out.print("Parts: ");
-            for (int i = 0; i < sum; i++) {
-                char rowLetter = (char) (Math.max(coordinates[0].charAt(0), coordinates[1].charAt(0)) - i);
-                System.out.print(rowLetter + columnFirstCoordinate + " ");
-            }
-        }
-    }*/
     private static String[][] updateBoard(String[][] board, StringBuilder[] coordinates, int length) {
         int rowFirstCoordinate = (int) coordinates[0].charAt(0) % 65;
         int rowSecondCoordinate = (int) coordinates[1].charAt(0) % 65;
         int columnFirstCoordinate = Integer.parseInt(coordinates[0].substring(1,coordinates[0].length()));
         int columnSecondCoordinate = Integer.parseInt(coordinates[1].substring(1,coordinates[1].length()));
-        boolean valid = false;
 
         if (rowFirstCoordinate == rowSecondCoordinate && columnFirstCoordinate != columnSecondCoordinate) {
             for (int i = 0; i < length; i++) {
@@ -156,5 +138,12 @@ public class battlefield {
             }
         }
         return board;
+    }
+
+    private static boolean checkForAdjacentShips(String[][] board, StringBuilder[] coordinates, int lenght) {
+        boolean adjacentShips = false;
+        String[][] newBoard = updateBoard(board,coordinates, lenght); /*create the theoretical updated board to look
+        for adjacent ships in it*/
+        return adjacentShips;
     }
 }
