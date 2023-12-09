@@ -1,5 +1,6 @@
 package game;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 public class battlefield {
@@ -47,7 +48,7 @@ public class battlefield {
 
         //print every value of the created board in the 10x10 grid
         for (int i = 0; i < 10; i++) {
-            System.out.print((char) (65 +i) + " "); // print the letters on the left side of each row
+            System.out.print((char) (65 + i) + " "); // print the letters on the left side of each row
             for (int j = 0; j < 10; j++) {
                 System.out.print(board[i][j] + " ");
             }
@@ -70,12 +71,12 @@ public class battlefield {
             coordinates[1] = ShipEndCoordinates;
 
 
-            //check for a valid length for the input without knowing if the given values are valid
+            //check for a valid length of the input
             if (ShipStartCoordinates.length() < 2 || ShipStartCoordinates.length() > 3 || ShipEndCoordinates.length() < 2 || ShipEndCoordinates.length() > 3) {
                 System.out.println("Error: The input has to look like \"A5 A10 or A5 B5\"!\n");
                 continue;
             }
-            //divide the coordinates in rows and columns for later validation
+            //divide the coordinates in x(columns) and y(rows) y stripping the letter and teh numbers apart
             String rowFirst = String.valueOf(ShipStartCoordinates.charAt(0));
             String rowSecond = String.valueOf(ShipEndCoordinates.charAt(0));
             String colFirst = String.valueOf(ShipStartCoordinates.substring(1,ShipStartCoordinates.length()));
@@ -123,27 +124,53 @@ public class battlefield {
     }
 
     private static String[][] updateBoard(String[][] board, StringBuilder[] coordinates, int length) {
-        int rowFirstCoordinate = (int) coordinates[0].charAt(0) % 65;
-        int rowSecondCoordinate = (int) coordinates[1].charAt(0) % 65;
-        int columnFirstCoordinate = Integer.parseInt(coordinates[0].substring(1,coordinates[0].length()));
-        int columnSecondCoordinate = Integer.parseInt(coordinates[1].substring(1,coordinates[1].length()));
+        //Ship first coordinates
+        int yAxisStart = (int) coordinates[0].charAt(0) % 65;
+        int xAxisStart = Integer.parseInt(coordinates[0].substring(1,coordinates[0].length()));
+        //Ship second coordinates
+        int yAxisEnd = (int) coordinates[1].charAt(0) % 65;
+        int xAxisEnd = Integer.parseInt(coordinates[1].substring(1,coordinates[1].length()));
 
-        if (rowFirstCoordinate == rowSecondCoordinate && columnFirstCoordinate != columnSecondCoordinate) {
+        if (yAxisEnd == yAxisStart && xAxisStart != xAxisEnd) {
             for (int i = 0; i < length; i++) {
-                board[rowFirstCoordinate][Math.min(columnFirstCoordinate, columnSecondCoordinate) + i - 1] = "O";
+                board[yAxisEnd][Math.min(xAxisStart, xAxisEnd) + i - 1] = "O";
             }
-        } else if (columnFirstCoordinate == columnSecondCoordinate && rowFirstCoordinate != rowSecondCoordinate) { //check for horizontal positioning
+        } else if (xAxisStart == xAxisEnd && yAxisStart != yAxisEnd) { //check for horizontal positioning
             for (int i = 0; i < length; i++) {
-                board[Math.min(rowFirstCoordinate, rowSecondCoordinate) + i][columnFirstCoordinate - 1] = "O";
+                board[Math.min(yAxisStart, yAxisEnd) + i][xAxisStart - 1] = "O";
             }
         }
         return board;
     }
 
-    private static boolean checkForAdjacentShips(String[][] board, StringBuilder[] coordinates, int lenght) {
+    private static boolean checkForAdjacentShips(String[][] board, StringBuilder[] coordinates, int length) {
         boolean adjacentShips = false;
-        String[][] newBoard = updateBoard(board,coordinates, lenght); /*create the theoretical updated board to look
-        for adjacent ships in it*/
+        /////////////////////////////////////////////////////////////////////////////////////////
+        //Ship first coordinates
+        int yAxisStart = (int) coordinates[0].charAt(0) % 65;
+        int xAxisStart = Integer.parseInt(coordinates[0].substring(1,coordinates[0].length()));
+        //Ship second coordinates
+        int yAxisEnd = (int) coordinates[1].charAt(0) % 65;
+        int xAxisEnd = Integer.parseInt(coordinates[1].substring(1,coordinates[1].length()));
+        /////////////////////////////////////////////////////////////////////////////////////////
+        try {
+            if (yAxisStart == yAxisEnd && xAxisStart != xAxisEnd) {
+                for (int i = 0; i < length; i++) {
+                    int xAxis = Math.min(xAxisStart, xAxisEnd) + i - 1;
+                    if (Objects.equals(board[yAxisStart][xAxis], "O") || Objects.equals(board[yAxisStart + 1][xAxis], "O")
+                            || Objects.equals(board[yAxisStart - 1][xAxis], "O")) {
+                        adjacentShips = true;
+                        break;
+                    }
+                }
+            } else if (xAxisStart == xAxisEnd && yAxisStart != yAxisEnd) { //check for horizontal positioning
+                for (int i = 0; i < length; i++) {
+                    //TODO match the checking algorithm for vertical ships
+                    break;
+                }
+            }
+        } catch (ArrayIndexOutOfBoundsException ignored) {}
+
         return adjacentShips;
     }
 }
