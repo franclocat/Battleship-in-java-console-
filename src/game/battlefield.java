@@ -6,12 +6,13 @@ import java.util.Scanner;
 public class battlefield {
 
     public static void main(String[] args) {
-        placeShips();
-    }
-    public static void placeShips() {
         String[][] boats = new String[][]{{"Aircraft Carrier", "5"}, {"Battleship","4"}, {"Submarine", "3"}, {"Cruiser", "3"}, {"Destroyer", "2"}};
         String[][] board = createBoard();
         printBoard(board);
+
+        placeShips(boats, board);
+    }
+    public static void placeShips(String[][] boats, String[][] board) {
         for (int i = 0; i < boats.length; i++) {
             System.out.println("Enter the coordinates of the " + boats[i][0] + " " + "(" + Integer.parseInt(boats[i][1]) + " cells):"); /*print the
              type of boats by using the index of the list and print teh amount of cells needed*/
