@@ -19,7 +19,7 @@ public class battlefield {
                 i -= 1;
             } else {
                 if (!checkForAdjacentShips(board, coordinates, length)) {
-                    String[][] updatedBoard = updateBoard(board, coordinates, length);
+                    String [][] updatedBoard = updateBoard(board, coordinates, length);
                     printBoard(updatedBoard);
                 } else {
                     System.out.println("Error! You placed it too close to another one. Try again: \n");
@@ -163,13 +163,18 @@ public class battlefield {
                         break;
                     }
                 }
-            } else if (xAxisStart == xAxisEnd && yAxisStart != yAxisEnd) { //check for horizontal positioning
+            } else if (xAxisStart == xAxisEnd && yAxisStart != yAxisEnd) {
                 for (int i = 0; i < length; i++) {
-                    //TODO match the checking algorithm for vertical ships
-                    break;
+                    int yAxis = Math.min(yAxisStart, yAxisEnd) + i;
+                    int xAxis = xAxisStart - 1;
+                    if (Objects.equals(board[yAxis][xAxis], "O") || Objects.equals(board[yAxis][xAxis - 1], "O")
+                            || Objects.equals(board[yAxis][xAxis + 1], "O")) {
+                        adjacentShips = true;
+                        break;
+                    }
                 }
             }
-        } catch (ArrayIndexOutOfBoundsException ignored) {}
+        } catch (ArrayIndexOutOfBoundsException ignore) {}
 
         return adjacentShips;
     }
