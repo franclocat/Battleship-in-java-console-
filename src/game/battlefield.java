@@ -6,6 +6,9 @@ import java.util.Scanner;
 public class battlefield {
 
     public static void main(String[] args) {
+        placeShips();
+    }
+    public static void placeShips() {
         String[][] boats = new String[][]{{"Aircraft Carrier", "5"}, {"Battleship","4"}, {"Submarine", "3"}, {"Cruiser", "3"}, {"Destroyer", "2"}};
         String[][] board = createBoard();
         printBoard(board);
@@ -114,11 +117,9 @@ public class battlefield {
         //
         if (rowFirstCoordinate.equals(rowSecondCoordinate) && !columnFirstCoordinate.equals(columnSecondCoordinate )) {
             length = Math.abs(Integer.parseInt(columnFirstCoordinate) - Integer.parseInt(columnSecondCoordinate )) + 1;
-            System.out.println("Length: " + length);
         } else if (columnFirstCoordinate.equals(columnSecondCoordinate ) && !rowFirstCoordinate.equals(rowSecondCoordinate)) { //check for horizontal positioning
             // get the length by subtracting the value of the rows as a char
             length = Math.abs(coordinates[0].charAt(0) - coordinates[1].charAt(0)) + 1;
-            System.out.println("Length: " + length);
         }
         return length;
     }
@@ -157,8 +158,11 @@ public class battlefield {
             if (yAxisStart == yAxisEnd && xAxisStart != xAxisEnd) {
                 for (int i = 0; i < length; i++) {
                     int xAxis = Math.min(xAxisStart, xAxisEnd) + i - 1;
-                    if (Objects.equals(board[yAxisStart][xAxis], "O") || Objects.equals(board[yAxisStart + 1][xAxis], "O")
-                            || Objects.equals(board[yAxisStart - 1][xAxis], "O")) {
+                    if (Objects.equals(board[yAxisStart][xAxis], "O") //looks for an O between the given coordinates
+                            || Objects.equals(board[yAxisStart + 1][xAxis], "O") //checks one row above for O's
+                            || Objects.equals(board[yAxisStart - 1][xAxis], "O") //checks one row below for O's
+                            || Objects.equals(board[yAxisStart][Math.max(xAxisStart, xAxisEnd)], "O") //checks for O next to the end coordinate
+                            || Objects.equals(board[yAxisStart][xAxis - 1], "O")) { //checks for O next to the starting coordinate
                         adjacentShips = true;
                         break;
                     }
@@ -167,8 +171,11 @@ public class battlefield {
                 for (int i = 0; i < length; i++) {
                     int yAxis = Math.min(yAxisStart, yAxisEnd) + i;
                     int xAxis = xAxisStart - 1;
-                    if (Objects.equals(board[yAxis][xAxis], "O") || Objects.equals(board[yAxis][xAxis - 1], "O")
-                            || Objects.equals(board[yAxis][xAxis + 1], "O")) {
+                    if (Objects.equals(board[yAxis][xAxis], "O") //looks for an O between the given coordinates
+                            || Objects.equals(board[yAxis][xAxis - 1], "O") //checks column to the left for O's
+                            || Objects.equals(board[yAxis][xAxis + 1], "O") //checks column to the right for O's
+                            || Objects.equals(board[yAxis - 1][xAxis], "O") //checks row above the start for O's
+                            || Objects.equals(board[yAxis + 1][xAxis], "O")) { //checks row below the start for O's
                         adjacentShips = true;
                         break;
                     }
