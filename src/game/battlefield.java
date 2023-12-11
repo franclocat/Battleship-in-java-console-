@@ -1,5 +1,7 @@
 package game;
 
+import java.awt.image.ImageProducer;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -10,7 +12,8 @@ public class battlefield {
         printBoard(board);
 
         String[][] boardP1 = placeShips(board);
-        validateCoordinates(board);
+        int[] fireCoordinates = validateCoordinates();
+        checkHit(boardP1, fireCoordinates);
     }
     public static String[][] placeShips(String[][] board) {
         String [][] updatedBoard = new String[10][10];
@@ -36,6 +39,7 @@ public class battlefield {
         }
         return updatedBoard;
     }
+
     private static String[][] createBoard() {
         String[][] board = new String[10][10];
         for (int i = 0; i < 10; i++) {
@@ -191,29 +195,39 @@ public class battlefield {
         return adjacentShips;
     }
 
-    private static StringBuilder validateCoordinates(String[][] board) {
+    private static int[] validateCoordinates() {
         Scanner scanner = new Scanner(System.in);
-        StringBuilder coordinates = new StringBuilder();
+        int[] checkedCoordinates =  new int[2];
 
         boolean valid = false;
 
         while (!valid) {
-            coordinates = new StringBuilder(scanner.next());
-            if (coordinates.length() < 2 || coordinates.length() > 3) {
-                System.out.println("\"Error: The input has to look like \"A5 A10 or A5 B5\"!\n");
+            StringBuilder nonCheckedCoordinates = new StringBuilder(scanner.next());
+            if (nonCheckedCoordinates.length() < 2 || nonCheckedCoordinates.length() > 3) {
+                System.out.println("\"Error!\n");
                 continue;
             } else {
-                String coordinatesYAxis = String.valueOf(coordinates.charAt(0));
-                int coordinatesXAxis = Integer.parseInt(String.valueOf(coordinates.substring(1,coordinates.length())));
+                char coordinatesYAxis = nonCheckedCoordinates.charAt(0);
+                int coordinatesXAxis = Integer.parseInt(String.valueOf(nonCheckedCoordinates.substring(1,nonCheckedCoordinates.length())));
 
                 String validRows = "ABCDEFGHIJ";
-                if (validRows.contains(coordinatesYAxis) && coordinatesXAxis > 0 && coordinatesXAxis < 10) {
+                if (validRows.contains(String.valueOf(coordinatesYAxis)) && coordinatesXAxis > 0 && coordinatesXAxis < 11) {
+                    checkedCoordinates[0] = coordinatesYAxis % 65;
+                    checkedCoordinates[1] = coordinatesXAxis;
                     valid = true;
                 } else {
                     System.out.println("Error! Wrong ship location! Try again:");
                 }
             }
         }
-      return coordinates;
+        return checkedCoordinates;
+    }
+
+    private static void checkHit(String[][] board, int[] fireCoordinates) {
+        if (board[fireCoordinates[0]][fireCoordinates[1]].equals("O")) {
+            System.out.println("Hit!");
+        } else {
+            System.out.println("Miss!");
+        }
     }
 }
