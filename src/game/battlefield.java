@@ -6,13 +6,16 @@ import java.util.Scanner;
 public class battlefield {
 
     public static void main(String[] args) {
-        String[][] boats = new String[][]{{"Aircraft Carrier", "5"}, {"Battleship","4"}, {"Submarine", "3"}, {"Cruiser", "3"}, {"Destroyer", "2"}};
         String[][] board = createBoard();
         printBoard(board);
 
-        placeShips(boats, board);
+        String[][] boardP1 = placeShips(board);
+        validateCoordinates(board);
     }
-    public static void placeShips(String[][] boats, String[][] board) {
+    public static String[][] placeShips(String[][] board) {
+        String [][] updatedBoard = new String[10][10];
+        String[][] boats = new String[][]{{"Aircraft Carrier", "5"}, {"Battleship","4"}, {"Submarine", "3"}, {"Cruiser", "3"}, {"Destroyer", "2"}};
+
         for (int i = 0; i < boats.length; i++) {
             System.out.println("Enter the coordinates of the " + boats[i][0] + " " + "(" + Integer.parseInt(boats[i][1]) + " cells):"); /*print the
              type of boats by using the index of the list and print teh amount of cells needed*/
@@ -23,7 +26,7 @@ public class battlefield {
                 i -= 1;
             } else {
                 if (!checkForAdjacentShips(board, coordinates, length)) {
-                    String [][] updatedBoard = updateBoard(board, coordinates, length);
+                    updatedBoard = updateBoard(board, coordinates, length);
                     printBoard(updatedBoard);
                 } else {
                     System.out.println("Error! You placed it too close to another one. Try again: \n");
@@ -31,6 +34,7 @@ public class battlefield {
                 }
             }
         }
+        return updatedBoard;
     }
     private static String[][] createBoard() {
         String[][] board = new String[10][10];
@@ -185,5 +189,31 @@ public class battlefield {
         } catch (ArrayIndexOutOfBoundsException ignore) {}
 
         return adjacentShips;
+    }
+
+    private static StringBuilder validateCoordinates(String[][] board) {
+        Scanner scanner = new Scanner(System.in);
+        StringBuilder coordinates = new StringBuilder();
+
+        boolean valid = false;
+
+        while (!valid) {
+            coordinates = new StringBuilder(scanner.next());
+            if (coordinates.length() < 2 || coordinates.length() > 3) {
+                System.out.println("\"Error: The input has to look like \"A5 A10 or A5 B5\"!\n");
+                continue;
+            } else {
+                String coordinatesYAxis = String.valueOf(coordinates.charAt(0));
+                int coordinatesXAxis = Integer.parseInt(String.valueOf(coordinates.substring(1,coordinates.length())));
+
+                String validRows = "ABCDEFGHIJ";
+                if (validRows.contains(coordinatesYAxis) && coordinatesXAxis > 0 && coordinatesXAxis < 10) {
+                    valid = true;
+                } else {
+                    System.out.println("Error! Wrong ship location! Try again:");
+                }
+            }
+        }
+      return coordinates;
     }
 }
