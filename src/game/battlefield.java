@@ -8,160 +8,22 @@ public class battlefield {
     public static void main(String[] args) {
         String[][] boardPlayerOne = createBoard();
         printBoard(boardPlayerOne);
-
         placeShips(boardPlayerOne);
-
+        System.out.println("The game starts!");
+        //temporary shooting without loop & with own board
+        printBoard(boardPlayerOne);
+        System.out.println("Take a shot!");
+        int[] shotCoordinates = validateCoordinates();
+        boolean hit = checkHit(boardPlayerOne,shotCoordinates);
+        printBoard(boardPlayerOne);
+        if (hit) {
+            System.out.println("You hit a ship!");
+        } else {
+            System.out.println("You missed!");
+        }
+        //////////////////////////////////////////////////
     }
-    /*public static String[][] placeShips(String[][] board) {
-        String [][] updatedBoard = new String[10][10];
-        String[][] boats = new String[][]{{"Aircraft Carrier", "5"}, {"Battleship","4"}, {"Submarine", "3"}, {"Cruiser", "3"}, {"Destroyer", "2"}};
 
-        for (int i = 0; i < boats.length; i++) {
-            System.out.println("Enter the coordinates of the " + boats[i][0] + " " + "(" + Integer.parseInt(boats[i][1]) + " cells):"); //print the
-             //type of boats by using the index of the list and print teh amount of cells needed
-            StringBuilder[] coordinates = getBoatCoordinates();
-            int length = getLength(coordinates);
-            if (length != Integer.parseInt(boats[i][1])) {
-                System.out.println("Error! Wrong length of the Submarine! Try again:");
-                i -= 1;
-            } else {
-                if (!checkForAdjacentShips(board, coordinates, length)) {
-                    updateBoard(board, coordinates, length);
-                    printBoard(updatedBoard);
-                } else {
-                    System.out.println("Error! You placed it too close to another one. Try again: \n");
-                    i -= 1;
-                }
-            }
-        }
-        return updatedBoard;
-    }*/
-
-    /*private static StringBuilder[] getBoatCoordinates() {
-        Scanner scanner = new Scanner(System.in);
-        boolean valid = false;
-        StringBuilder[] coordinates = new StringBuilder[2];
-
-        //Make a loop that keeps prompting for coordinates if the input given is not valid
-        while (!valid) {
-            StringBuilder ShipStartCoordinates = new StringBuilder(scanner.next());
-            StringBuilder ShipEndCoordinates = new StringBuilder(scanner.next());
-            coordinates[0] = ShipStartCoordinates;
-            coordinates[1] = ShipEndCoordinates;
-
-
-            //check for a valid length of the input
-            if (ShipStartCoordinates.length() < 2 || ShipStartCoordinates.length() > 3 || ShipEndCoordinates.length() < 2 || ShipEndCoordinates.length() > 3) {
-                System.out.println("Error: The input has to look like \"A5 A10 or A5 B5\"!\n");
-                continue;
-            }
-            //divide the coordinates in x(columns) and y(rows) y stripping the letter and teh numbers apart
-            String rowFirst = String.valueOf(ShipStartCoordinates.charAt(0));
-            String rowSecond = String.valueOf(ShipEndCoordinates.charAt(0));
-            String colFirst = String.valueOf(ShipStartCoordinates.substring(1,ShipStartCoordinates.length()));
-            String colSecond = String.valueOf(ShipEndCoordinates.substring(1,ShipEndCoordinates.length()));
-
-            //define valid values for rows
-            String validRows = "ABCDEFGHIJ";
-
-            if (validRows.contains(rowFirst) && validRows.contains(rowSecond) && colFirst.matches("[1-9]|10") &&
-            colSecond.matches("[1-9]|10")) {
-                //check for horizontal positioning
-                if (rowFirst.equals(rowSecond) && !colFirst.equals(colSecond)) {
-                    valid = true;
-                } else if (colFirst.equals(colSecond) && !rowFirst.equals(rowSecond)) { //check for horizontal positioning
-                    valid = true;
-                } else {
-                    System.out.println("Error! Wrong ship location! Try again: \n");
-                }
-            } else {
-                System.out.println("Error! Wrong ship location! Try again:");
-            }
-
-
-        }
-        return coordinates;
-    }*/
-
-    /*private static int getLength(StringBuilder[] coordinates) {
-        int length = 0;
-        //can be optimized and get deleted by only using coordinates.charAt() comparison
-        String rowFirstCoordinate = String.valueOf(coordinates[0].charAt(0));
-        String rowSecondCoordinate = String.valueOf(coordinates[1].charAt(0));
-        String columnFirstCoordinate= String.valueOf(coordinates[0].substring(1,coordinates[0].length()));
-        String columnSecondCoordinate = String.valueOf(coordinates[1].substring(1,coordinates[1].length()));
-        //
-        if (rowFirstCoordinate.equals(rowSecondCoordinate) && !columnFirstCoordinate.equals(columnSecondCoordinate )) {
-            length = Math.abs(Integer.parseInt(columnFirstCoordinate) - Integer.parseInt(columnSecondCoordinate )) + 1;
-        } else if (columnFirstCoordinate.equals(columnSecondCoordinate ) && !rowFirstCoordinate.equals(rowSecondCoordinate)) { //check for horizontal positioning
-            // get the length by subtracting the value of the rows as a char
-            length = Math.abs(coordinates[0].charAt(0) - coordinates[1].charAt(0)) + 1;
-        }
-        return length;
-    }*/
-
-    /*private static void updateBoard(String[][] board, StringBuilder[] coordinates, int length) {
-        //Ship first coordinates
-        int yAxisStart = (int) coordinates[0].charAt(0) % 65;
-        int xAxisStart = Integer.parseInt(coordinates[0].substring(1,coordinates[0].length()));
-        //Ship second coordinates
-        int yAxisEnd = (int) coordinates[1].charAt(0) % 65;
-        int xAxisEnd = Integer.parseInt(coordinates[1].substring(1,coordinates[1].length()));
-
-        if (yAxisEnd == yAxisStart && xAxisStart != xAxisEnd) {
-            for (int i = 0; i < length; i++) {
-                board[yAxisEnd][Math.min(xAxisStart, xAxisEnd) + i - 1] = "O";
-            }
-        } else if (xAxisStart == xAxisEnd && yAxisStart != yAxisEnd) { //check for horizontal positioning
-            for (int i = 0; i < length; i++) {
-                board[Math.min(yAxisStart, yAxisEnd) + i][xAxisStart - 1] = "O";
-            }
-        }
-    }*/
-
-    /*private static boolean checkForAdjacentShips(String[][] board, StringBuilder[] coordinates, int length) {
-        boolean adjacentShips = false;
-        /////////////////////////////////////////////////////////////////////////////////////////
-        //Ship first coordinates
-        int yAxisStart = (int) coordinates[0].charAt(0) % 65;
-        int xAxisStart = Integer.parseInt(coordinates[0].substring(1,coordinates[0].length()));
-        //Ship second coordinates
-        int yAxisEnd = (int) coordinates[1].charAt(0) % 65;
-        int xAxisEnd = Integer.parseInt(coordinates[1].substring(1,coordinates[1].length()));
-        /////////////////////////////////////////////////////////////////////////////////////////
-        try {
-            if (yAxisStart == yAxisEnd && xAxisStart != xAxisEnd) {
-                for (int i = 0; i < length; i++) {
-                    int xAxis = Math.min(xAxisStart, xAxisEnd) + i - 1;
-                    if (Objects.equals(board[yAxisStart][xAxis], "O") //looks for an O between the given coordinates
-                            || Objects.equals(board[yAxisStart + 1][xAxis], "O") //checks one row above for O's
-                            || Objects.equals(board[yAxisStart - 1][xAxis], "O") //checks one row below for O's
-                            || Objects.equals(board[yAxisStart][Math.max(xAxisStart, xAxisEnd)], "O") //checks for O next to the end coordinate
-                            || Objects.equals(board[yAxisStart][xAxis - 1], "O")) { //checks for O next to the starting coordinate
-                        adjacentShips = true;
-                        break;
-                    }
-                }
-            } else if (xAxisStart == xAxisEnd && yAxisStart != yAxisEnd) {
-                for (int i = 0; i < length; i++) {
-                    int yAxis = Math.min(yAxisStart, yAxisEnd) + i;
-                    int xAxis = xAxisStart - 1;
-                    if (Objects.equals(board[yAxis][xAxis], "O") //looks for an O between the given coordinates
-                            || Objects.equals(board[yAxis][xAxis - 1], "O") //checks column to the left for O's
-                            || Objects.equals(board[yAxis][xAxis + 1], "O") //checks column to the right for O's
-                            || Objects.equals(board[yAxis - 1][xAxis], "O") //checks row above the start for O's
-                            || Objects.equals(board[yAxis + 1][xAxis], "O")) { //checks row below the start for O's
-                        adjacentShips = true;
-                        break;
-                    }
-                }
-            }
-        } catch (ArrayIndexOutOfBoundsException ignore) {}
-
-        return adjacentShips;
-    }*/
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private static String[][] createBoard() {
         String[][] board = new String[10][10];
         for (int i = 0; i < 10; i++) {
@@ -311,22 +173,17 @@ public class battlefield {
 
     }
 
-    private static boolean checkHit(String[][] board, int[] fireCoordinates) {
+    private static boolean checkHit(String[][] board, int[] shotCoordinates) {
         boolean hit = false;
-        if (board[fireCoordinates[0]][fireCoordinates[1]].equals("O")) {
+        if (board[shotCoordinates[0]][shotCoordinates[1]].equals("O")) {
+            board[shotCoordinates[0]][shotCoordinates[1]] = "X";
             hit = true;
-            System.out.println("Hit!");
         } else {
-            System.out.println("Miss!");
+            board[shotCoordinates[0]][shotCoordinates[1]] = "M";
         }
         return hit;
     }
 
-    private static void hitBoard(String[][] board, int[] fireCoordinates, boolean checkHit) {
-        if (checkHit) {
-            board[fireCoordinates[0]][fireCoordinates[1]] = "X";
-        } else {
-            board[fireCoordinates[0]][fireCoordinates[1]] = "M";
-        }
-    }
+    //coordinate validator TEMPORARY
+    
 }
