@@ -185,5 +185,18 @@ public class battlefield {
     }
 
     //coordinate validator TEMPORARY
-    
+    private static int[][] validateTwoCoordinates() {
+        Scanner scanner = new Scanner(System.in);
+        int[][] coordinates = new int[2][2];
+        StringBuilder start = new StringBuilder(scanner.next());
+        StringBuilder end = new StringBuilder(scanner.next());
+
+        coordinates[0][0] = start.charAt(0) % 65;
+        coordinates[0][1] = Integer.parseInt(start.substring(1,start.length()));
+
+        coordinates[1][0] = end.charAt(0) % 65;
+        coordinates[1][1] = Integer.parseInt(end.substring(1,start.length()));
+
+        return  coordinates;
+    }
 }
