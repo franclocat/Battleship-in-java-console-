@@ -68,6 +68,39 @@ public class battlefield {
         }
     }
 
+    private static int[][] validateTwoCoordinates() {
+        Scanner scanner = new Scanner(System.in);
+        int[][] checkedCoordinates = new int[2][2];
+        boolean valid = false;
+
+        while (!valid) {
+            StringBuilder start = new StringBuilder(scanner.next());
+            StringBuilder end = new StringBuilder(scanner.next());
+
+            if (start.length() < 2 || start.length() > 3 || end.length() < 2 || end.length() > 3) {
+                System.out.println("Error: Wrong coordinate input\n");
+            } else {
+                //divide the inputs in X and Y coordinates
+                checkedCoordinates[0][0] = start.charAt(0) % 65; // A = 0, B = 1, C = 2...
+                checkedCoordinates[0][1] = Integer.parseInt(start.substring(1,start.length())) - 1; //A10 -> 10 -> 9
+
+                checkedCoordinates[1][0] = end.charAt(0) % 65;
+                checkedCoordinates[1][1] = Integer.parseInt(end.substring(1,end.length())) - 1;
+                for (int i = 0; i < 2; i++) {
+                    for (int j = 0; j < 2; j++) {
+                        if (checkedCoordinates[i][j] > 9|| checkedCoordinates[i][j] < 0) {
+                            System.out.println("Error: Wrong coordinates!");
+                            break;
+                        } else if (i == 1) {
+                            valid = true;
+                        }
+                    }
+                }
+            }
+        }
+        return checkedCoordinates;
+    }
+
     private static int[] validateCoordinates() {
         Scanner scanner = new Scanner(System.in);
         int[] checkedCoordinates =  new int[2];
@@ -153,8 +186,12 @@ public class battlefield {
 
         for (int i = 0; i < boats.length; i++) {
             System.out.println("Enter the coordinates of the " + boats[i][0] + " " + "(" + Integer.parseInt(boats[i][1]) + " cells):");
-            int[] firstCoordinate = validateCoordinates();
-            int[] secondCoordinate = validateCoordinates();
+            //int[] firstCoordinate = validateCoordinates();
+            //int[] secondCoordinate = validateCoordinates();
+            int[][] coordinates = validateTwoCoordinates();
+            int[] firstCoordinate = coordinates[0];
+            int[] secondCoordinate = coordinates[1];
+
             int length = getLength(firstCoordinate, secondCoordinate);
             if (!checkHorizontalOrVertical(firstCoordinate, secondCoordinate)) {
                 System.out.println("Error! Wrong ship location! Try again: \n");
@@ -185,18 +222,5 @@ public class battlefield {
     }
 
     //coordinate validator TEMPORARY
-    private static int[][] validateTwoCoordinates() {
-        Scanner scanner = new Scanner(System.in);
-        int[][] coordinates = new int[2][2];
-        StringBuilder start = new StringBuilder(scanner.next());
-        StringBuilder end = new StringBuilder(scanner.next());
 
-        coordinates[0][0] = start.charAt(0) % 65;
-        coordinates[0][1] = Integer.parseInt(start.substring(1,start.length()));
-
-        coordinates[1][0] = end.charAt(0) % 65;
-        coordinates[1][1] = Integer.parseInt(end.substring(1,start.length()));
-
-        return  coordinates;
-    }
 }
