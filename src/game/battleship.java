@@ -113,7 +113,9 @@ public class battleship {
             if (direction.equals("horizontal")) {
                 int smallestX = Math.min(start[1], end[1]);
                 for (int i = 0; i < length + 2; i++) {
-                    if (board[start[0]][smallestX + i].equals("O")) {
+                    if (board[start[0]][smallestX + i].equals("O")
+                            || board[start[0] - 1][smallestX + i - 1].equals("O")
+                            || board[start[0] + 1][smallestX + i - 1].equals("O")) {
                         adjacentShips = true;
                         break;
                     }
