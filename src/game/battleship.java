@@ -5,22 +5,14 @@ import java.util.Scanner;
 public class battleship {
     public static void main(String[] args) {
         String[][] board = createBoard();
+        int[][] boatParts = new int[5][];
         printBoard(board);
         placeShips(board);
         System.out.println("The game starts!");
-        ////////
-        String[][] fogOfWar = createBoard();
-        printBoard(fogOfWar);
-        System.out.println("Take a shot!");
-        int[] fireCoordinates = validateHitCoordinates();
-        boolean hit = checkHit(board, fogOfWar, fireCoordinates);
-        printBoard(fogOfWar);
-        if (hit) {
-            System.out.println("You hit a ship!");
-        } else {
-            System.out.println("You missed!");
+        shootTheShips(board);
+        if (isWin(board)) {
+            System.out.println("You sank the last ship. You won. Congratulations!");
         }
-        printBoard(board);
     }
 
     private static String[][] createBoard() {
@@ -70,20 +62,24 @@ public class battleship {
                 System.out.println("Error: Wrong coordinate input\n");
             } else {
                 //divide the inputs in X and Y coordinates
-                checkedCoordinates[0][0] = start.charAt(0) % 65; // A = 0, B = 1, C = 2...
-                checkedCoordinates[0][1] = Integer.parseInt(start.substring(1,start.length())) - 1; //A10 -> 10 -> 9
+                try {
+                    checkedCoordinates[0][0] = start.charAt(0) % 65; // A = 0, B = 1, C = 2...
+                    checkedCoordinates[0][1] = Integer.parseInt(start.substring(1,start.length())) - 1; //A10 -> 10 -> 9
 
-                checkedCoordinates[1][0] = end.charAt(0) % 65;
-                checkedCoordinates[1][1] = Integer.parseInt(end.substring(1,end.length())) - 1;
-                for (int i = 0; i < 2; i++) {
-                    for (int j = 0; j < 2; j++) {
-                        if (checkedCoordinates[i][j] > 9|| checkedCoordinates[i][j] < 0) {
-                            System.out.println("Error: Wrong coordinates!");
-                            break;
-                        } else if (i == 1) {
-                            valid = true;
+                    checkedCoordinates[1][0] = end.charAt(0) % 65;
+                    checkedCoordinates[1][1] = Integer.parseInt(end.substring(1,end.length())) - 1;
+                    for (int i = 0; i < 2; i++) {
+                        for (int j = 0; j < 2; j++) {
+                            if (checkedCoordinates[i][j] > 9|| checkedCoordinates[i][j] < 0) {
+                                System.out.println("Error: Wrong coordinates!");
+                                break;
+                            } else if (i == 1) {
+                                valid = true;
+                            }
                         }
                     }
+                } catch (NumberFormatException e) {
+                    System.out.println("Error: Wrong coordinate input\n");
                 }
             }
         }
@@ -112,14 +108,12 @@ public class battleship {
 
     private static boolean checkAdjacency(String[][] board, int[] start, int[] end, int length, String direction) {
         boolean adjacentShips = false;
-
+        //TODO if the coordinates are at the border, the adjacency does not get controlled the try catch prevents it from checking
         try {
             if (direction.equals("horizontal")) {
                 int smallestX = Math.min(start[1], end[1]);
                 for (int i = 0; i < length + 2; i++) {
-                    if (board[start[0]][smallestX + i].equals("O")
-                            || board[start[0] - 1][smallestX + i - 1].equals("O")
-                            || board[start[0] + 1][smallestX + i - 1].equals("O")) {
+                    if (board[start[0]][smallestX + i].equals("O")) {
                         adjacentShips = true;
                         break;
                     }
@@ -136,7 +130,7 @@ public class battleship {
                 }
             }
         } catch (ArrayIndexOutOfBoundsException ignore) {}
-
+        System.out.println(adjacentShips);
         return adjacentShips;
     }
 
@@ -204,5 +198,32 @@ public class battleship {
             fogOfWar[fireCoordinates[0]][fireCoordinates[1]] = "M";
         }
         return hit;
+    }
+
+    private static boolean isWin(String[][] board) {
+        boolean isWin = false;
+        for (String[] rows : board) {
+            for (String column : rows) {
+                if (column.equals("O")) {
+                    isWin = true;
+                    break;
+                }
+            }
+        }
+        return isWin;
+    }
+
+    private static void shootTheShips(String[][] board) {
+        String[][] fogOfWar = createBoard();
+        printBoard(fogOfWar);
+        System.out.println("Take a shot!");
+        int[] fireCoordinates = validateHitCoordinates();
+        boolean hit = checkHit(board, fogOfWar, fireCoordinates);
+        printBoard(fogOfWar);
+        if (hit) {
+            System.out.println("You hit a ship! Try again: \n");
+        } else {
+            System.out.println("You missed. Try again \n");
+        }
     }
 }
