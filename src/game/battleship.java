@@ -108,31 +108,50 @@ public class battleship {
 
     private static boolean checkAdjacency(String[][] board, int[] start, int[] end, int length, String direction) {
         boolean adjacentShips = false;
-        //TODO if the coordinates are at the border, the adjacency does not get controlled the try catch prevents it from checking
-        try {
-            if (direction.equals("horizontal")) {
-                int smallestX = Math.min(start[1], end[1]);
-                for (int i = 0; i < length + 2; i++) {
-                    if (board[start[0]][smallestX + i].equals("O")
-                            || board[start[0] - 1][smallestX + i - 1].equals("O")
-                            || board[start[0] + 1][smallestX + i - 1].equals("O")) {
+
+        if (direction.equals("horizontal")) {
+            int smallestX = Math.min(start[1], end[1]);
+            int largestX = Math.max(start[1], end[1]);
+
+            // Adjust bounds to prevent out-of-bounds access
+            int minX = Math.max(smallestX - 1, 0);
+            int maxX = Math.min(largestX + 1, board[0].length - 1);
+            int minY = Math.max(start[0] - 1, 0);
+            int maxY = Math.min(start[0] + 1, board.length - 1);
+
+            for (int i = minY; i <= maxY; i++) {
+                for (int j = minX; j <= maxX; j++) {
+                    if (board[i][j].equals("O")) {
                         adjacentShips = true;
                         break;
                     }
                 }
-            } else if (direction.equals("vertical")) {
-                int smallestY = Math.min(start[0], end[0]);
-                for (int i = 0; i < length + 2; i++) {
-                    if (board[smallestY + i][start[1]].equals("O")
-                            || board[smallestY + i - 1][start[1] - 1].equals("O")
-                            || board[smallestY + i - 1][start[1] + 1].equals("O")) {
-                        adjacentShips = true;
-                        break;
-                    }
+                if (adjacentShips) {
+                    break;
                 }
             }
-        } catch (ArrayIndexOutOfBoundsException ignore) {}
-        System.out.println(adjacentShips);
+        } else if (direction.equals("vertical")) {
+            int smallestY = Math.min(start[0], end[0]);
+            int largestY = Math.max(start[0], end[0]);
+
+            // Adjust bounds to prevent out-of-bounds access
+            int minX = Math.max(start[1] - 1, 0);
+            int maxX = Math.min(start[1] + 1, board[0].length - 1);
+            int minY = Math.max(smallestY - 1, 0);
+            int maxY = Math.min(largestY + 1, board.length - 1);
+
+            for (int i = minY; i <= maxY; i++) {
+                for (int j = minX; j <= maxX; j++) {
+                    if (board[i][j].equals("O")) {
+                        adjacentShips = true;
+                        break;
+                    }
+                }
+                if (adjacentShips) {
+                    break;
+                }
+            }
+        }
         return adjacentShips;
     }
 
