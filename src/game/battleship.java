@@ -4,15 +4,25 @@ import java.util.Scanner;
 
 public class battleship {
     public static void main(String[] args) {
-        String[][] board = createBoard();
-        int[][] boatParts = new int[5][];
-        printBoard(board);
-        placeShips(board);
+        Player p1 = new Player();
+        printBoard(p1.playerBoard);
+        placeShips(p1.playerBoard);
         System.out.println("The game starts!");
-        shootTheShips(board);
-        if (isWin(board)) {
-            System.out.println("You sank the last ship. You won. Congratulations!");
+        printBoard(p1.fogOfWar);
+        while (!isWin(p1.playerBoard)) {
+            shootTheShips(p1.playerBoard, p1.fogOfWar);
         }
+        System.out.println("You sank the last ship. You won. Congratulations!");
+        /*String[][] boardP1 = createBoard();
+        printBoard(boardP1);
+        placeShips(boardP1);
+        System.out.println("The game starts!");
+        String[][] fogOfWar = createBoard();
+        printBoard(fogOfWar);
+        while (!isWin(boardP1)) {
+            shootTheShips(boardP1, fogOfWar);
+        }
+        System.out.println("You sank the last ship. You won. Congratulations!");*/
     }
 
     private static String[][] createBoard() {
@@ -222,11 +232,11 @@ public class battleship {
     }
 
     private static boolean isWin(String[][] board) {
-        boolean isWin = false;
+        boolean isWin = true;
         for (String[] rows : board) {
             for (String column : rows) {
                 if (column.equals("O")) {
-                    isWin = true;
+                    isWin = false;
                     break;
                 }
             }
@@ -234,9 +244,7 @@ public class battleship {
         return isWin;
     }
 
-    private static void shootTheShips(String[][] board) {
-        String[][] fogOfWar = createBoard();
-        printBoard(fogOfWar);
+    private static void shootTheShips(String[][] board, String[][] fogOfWar) {
         System.out.println("Take a shot!");
         int[] fireCoordinates = validateHitCoordinates();
         boolean hit = checkHit(board, fogOfWar, fireCoordinates);
