@@ -7,6 +7,7 @@ import java.util.Scanner;
 public class Player {
     String[][] playerBoard = createBoard();
     String[][] fogOfWar = createBoard();
+    List <Ship> ships = new ArrayList<>();
 
     private static String[][] createBoard() {
         String[][] board = new String[10][10];
