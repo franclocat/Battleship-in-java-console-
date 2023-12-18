@@ -1,5 +1,7 @@
 package game;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class battleship {
@@ -59,6 +61,7 @@ public class battleship {
             }
         }
     }
+
     private static int[][] validateTwoCoordinates() {
         Scanner scanner = new Scanner(System.in);
         int[][] checkedCoordinates = new int[2][2];
@@ -116,7 +119,7 @@ public class battleship {
         return direction;
     }
 
-    private static boolean checkAdjacency(String[][] board, int[] start, int[] end, int length, String direction) {
+    private static boolean checkAdjacency(String[][] board, int[] start, int[] end, String direction) {
         boolean adjacentShips = false;
 
         if (direction.equals("horizontal")) {
@@ -184,7 +187,7 @@ public class battleship {
                 i -= 1;
             } else {
                 String direction = isHorizontalOrVertical(start, end);
-                boolean adjacent = checkAdjacency(board, start, end, length, direction);
+                boolean adjacent = checkAdjacency(board, start, end, direction);
                 if (!adjacent) {
                     updateShipsInBoard(board, direction, length, shipCoordinates);
                     printBoard(board);
