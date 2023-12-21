@@ -6,7 +6,7 @@ public class Ship {
     String name;
     int length;
     String direction;
-    List<List<int[]>> segments;
+    List<int[]> shipParts;
 
     public Ship(String name, int length) {
         this.name = name;
@@ -35,5 +35,13 @@ public class Ship {
 
     public void setDirection(String direction) {
         this.direction = direction;
+    }
+
+    public List<int[]> getShipParts() {
+        return shipParts;
+    }
+
+    public void setShipParts(List<int[]> shipParts) {
+        this.shipParts = shipParts;
     }
 }

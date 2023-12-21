@@ -1,23 +1,11 @@
 package game;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Player {
     String[][] playerBoard = createBoard();
     String[][] fogOfWar = createBoard();
     List <Ship> ships = new ArrayList<>();
-
-    private static String[][] createBoard() {
-        String[][] board = new String[10][10];
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                board[i][j] = "~";
-            }
-        }
-        return board;
-    }
 
     public static void printBoard(String[][] board) {
         System.out.println("  1 2 3 4 5 6 7 8 9 10");
@@ -28,6 +16,48 @@ public class Player {
             }
             System.out.println();
         }
+    }
+
+    void placeShips() {
+        ships.add(new Ship("Aircraft_Carrier", 5));
+        ships.add(new Ship("Battleship", 4));
+        ships.add(new Ship("Submarine", 3));
+        ships.add(new Ship("Cruiser", 3));
+        ships.add(new Ship("Destroyer", 2));
+
+
+        for (int i = 0; i < ships.size(); i++) {
+            System.out.println("Place the " + ships.get(i).name + " (" + ships.get(i).length + " cells)");
+            int[][] shipCoordinates = validateTwoCoordinates();
+            int[] start = shipCoordinates[0];
+            int[] end = shipCoordinates[1];
+            int length = getLength(start, end);
+            if (length != ships.get(i).length) {
+                System.out.println("Wrong ship length!");
+                i -= 1;
+            } else {
+                String direction = isHorizontalOrVertical(start, end);
+                ships.get(i).setDirection(direction);
+                boolean adjacent = checkAdjacency(start, end, direction);
+                if (!adjacent) {
+                    updateShipsInBoard(i, length, shipCoordinates);
+                    printBoard(playerBoard);
+                } else {
+                    System.out.println("Error: Too close to another ship!");
+                    i -= 1;
+                }
+            }
+        }
+    }
+
+    private static String[][] createBoard() {
+        String[][] board = new String[10][10];
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                board[i][j] = "~";
+            }
+        }
+        return board;
     }
 
     private int[][] validateTwoCoordinates() {
@@ -136,50 +166,27 @@ public class Player {
         return adjacentShips;
     }
 
-    private void updateShipsInBoard(String direction, int length, int[][] coordinates) {
-        if (direction.equals("vertical")) {
+    private void updateShipsInBoard(int shipNumber, int length, int[][] coordinates) {
+        int[] shipPart = new int[2];
+        List<int[]> allShipParts = new ArrayList<>();
+        if (ships.get(shipNumber).getDirection().equals("vertical")) {
             int smallerY = Math.min(coordinates[0][0], coordinates[1][0]);
             for (int i = 0; i < length; i++) {
                 playerBoard[smallerY + i][coordinates[0][1]] = "O";
+                shipPart[0] = smallerY + i;
+                shipPart[1] = coordinates[0][1];
+                allShipParts.add(shipPart);
             }
-        } else if (direction.equals("horizontal")) {
+        } else if (ships.get(shipNumber).getDirection().equals("horizontal")) {
             int smallerX = Math.min(coordinates[0][1], coordinates[1][1]);
             for (int i = 0; i < length; i++) {
                 playerBoard[coordinates[0][0]][smallerX + i] = "O";
+                shipPart[0] = coordinates[0][0];
+                shipPart[1] = smallerX + i;
+                allShipParts.add(shipPart);
             }
         }
-    }
-
-    void placeShips() {
-        ships.add(new Ship("Aircraft_Carrier", 5));
-        ships.add(new Ship("Battleship", 4));
-        ships.add(new Ship("Submarine", 3));
-        ships.add(new Ship("Cruiser", 3));
-        ships.add(new Ship("Destroyer", 2));
-
-
-        for (int i = 0; i < ships.size(); i++) {
-            System.out.println("Place the " + ships.get(i).name + " (" + ships.get(i).length + " cells)");
-            int[][] shipCoordinates = validateTwoCoordinates();
-            int[] start = shipCoordinates[0];
-            int[] end = shipCoordinates[1];
-            int length = getLength(start, end);
-            if (length != ships.get(i).length) {
-                System.out.println("Wrong ship length!");
-                i -= 1;
-            } else {
-                String direction = isHorizontalOrVertical(start, end);
-                ships.get(i).setDirection(direction);
-                boolean adjacent = checkAdjacency(start, end, direction);
-                if (!adjacent) {
-                    updateShipsInBoard(direction, length, shipCoordinates);
-                    printBoard(playerBoard);
-                } else {
-                    System.out.println("Error: Too close to another ship!");
-                    i -= 1;
-                }
-            }
-        }
+        ships.get(shipNumber).setShipParts(allShipParts);
     }
 
     private static int[] validateHitCoordinates() {

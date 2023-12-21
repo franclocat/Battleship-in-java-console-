@@ -7,6 +7,6 @@ public class Main {
 
         Player.printBoard(player1.playerBoard);
         player1.placeShips();
-        player1.shootTheShips();
+        //player1.shootTheShips(); one shot gets made and checked
     }
 }
