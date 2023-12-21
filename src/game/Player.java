@@ -30,38 +30,6 @@ public class Player {
         }
     }
 
-    void placeShips() {
-        ships.add(new Ship("Aircraft_Carrier", 5));
-        ships.add(new Ship("Battleship", 4));
-        ships.add(new Ship("Submarine", 3));
-        ships.add(new Ship("Cruiser", 3));
-        ships.add(new Ship("Destroyer", 2));
-
-
-        for (int i = 0; i < ships.size(); i++) {
-            System.out.println("Place the " + ships.get(i).name + " (" + ships.get(i).length + " cells)");
-            int[][] shipCoordinates = validateTwoCoordinates();
-            int[] start = shipCoordinates[0];
-            int[] end = shipCoordinates[1];
-            int length = getLength(start, end);
-            if (length != ships.get(i).length) {
-                System.out.println("Wrong ship length!");
-                i -= 1;
-            } else {
-                String direction = isHorizontalOrVertical(start, end);
-                ships.get(i).setDirection(direction);
-                boolean adjacent = checkAdjacency(start, end, direction);
-                if (!adjacent) {
-                    updateShipsInBoard(direction, length, shipCoordinates);
-                    printBoard(playerBoard);
-                } else {
-                    System.out.println("Error: Too close to another ship!");
-                    i -= 1;
-                }
-            }
-        }
-    }
-
     private int[][] validateTwoCoordinates() {
         Scanner scanner = new Scanner(System.in);
         int[][] checkedCoordinates = new int[2][2];
@@ -182,6 +150,38 @@ public class Player {
         }
     }
 
+    void placeShips() {
+        ships.add(new Ship("Aircraft_Carrier", 5));
+        ships.add(new Ship("Battleship", 4));
+        ships.add(new Ship("Submarine", 3));
+        ships.add(new Ship("Cruiser", 3));
+        ships.add(new Ship("Destroyer", 2));
+
+
+        for (int i = 0; i < ships.size(); i++) {
+            System.out.println("Place the " + ships.get(i).name + " (" + ships.get(i).length + " cells)");
+            int[][] shipCoordinates = validateTwoCoordinates();
+            int[] start = shipCoordinates[0];
+            int[] end = shipCoordinates[1];
+            int length = getLength(start, end);
+            if (length != ships.get(i).length) {
+                System.out.println("Wrong ship length!");
+                i -= 1;
+            } else {
+                String direction = isHorizontalOrVertical(start, end);
+                ships.get(i).setDirection(direction);
+                boolean adjacent = checkAdjacency(start, end, direction);
+                if (!adjacent) {
+                    updateShipsInBoard(direction, length, shipCoordinates);
+                    printBoard(playerBoard);
+                } else {
+                    System.out.println("Error: Too close to another ship!");
+                    i -= 1;
+                }
+            }
+        }
+    }
+
     private static int[] validateHitCoordinates() {
         Scanner scanner = new Scanner(System.in);
         boolean valid = false;
@@ -217,18 +217,6 @@ public class Player {
         return hit;
     }
 
-    void shootTheShips() {
-        System.out.println("Take a shot!");
-        int[] fireCoordinates = validateHitCoordinates();
-        boolean hit = checkHit(fireCoordinates);
-        printBoard(fogOfWar);
-        if (hit) {
-            System.out.println("You hit a ship! Try again: \n");
-        } else {
-            System.out.println("You missed. Try again \n");
-        }
-    }
-
     private boolean isWin() {
 
         boolean isWin = true;
@@ -241,5 +229,17 @@ public class Player {
             }
         }
         return isWin;
+    }
+
+    void shootTheShips() {
+        System.out.println("Take a shot!");
+        int[] fireCoordinates = validateHitCoordinates();
+        boolean hit = checkHit(fireCoordinates);
+        printBoard(fogOfWar);
+        if (hit) {
+            System.out.println("You hit a ship! Try again: \n");
+        } else {
+            System.out.println("You missed. Try again \n");
+        }
     }
 }
