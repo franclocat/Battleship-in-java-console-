@@ -19,7 +19,7 @@ public class Player {
     }
 
     void placeShips() {
-        ships.add(new Ship("Aircraft_Carrier", 5));
+        ships.add(new Ship("Aircraft Carrier", 5));
         ships.add(new Ship("Battleship", 4));
         ships.add(new Ship("Submarine", 3));
         ships.add(new Ship("Cruiser", 3));
@@ -27,7 +27,7 @@ public class Player {
 
 
         for (int i = 0; i < ships.size(); i++) {
-            System.out.println("Place the " + ships.get(i).name + " (" + ships.get(i).length + " cells)");
+            System.out.println("Enter the coordinates of the " + ships.get(i).name + " (" + ships.get(i).length + " cells)");
             int[][] shipCoordinates = validateTwoCoordinates();
             int[] start = shipCoordinates[0];
             int[] end = shipCoordinates[1];
@@ -211,9 +211,11 @@ public class Player {
         }
         return checkedCoordinates;
     }
+
+    //TODO check for hits on the enemy's board instead of the one of the same player
     private boolean checkHit(int[] fireCoordinates) {
         boolean hit = false;
-        if (playerBoard[fireCoordinates[0]][fireCoordinates[1]].equals("O")) {
+        if (playerBoard[fireCoordinates[0]][fireCoordinates[1]].equals("O") || playerBoard[fireCoordinates[0]][fireCoordinates[1]].equals("X")) {
             playerBoard[fireCoordinates[0]][fireCoordinates[1]] = "X";
             fogOfWar[fireCoordinates[0]][fireCoordinates[1]] = "X";
             hit = true;
@@ -222,6 +224,28 @@ public class Player {
             fogOfWar[fireCoordinates[0]][fireCoordinates[1]] = "M";
         }
         return hit;
+    }
+
+    private boolean isShipSunk() {
+        boolean sunkenShip = false;
+        for (Ship ship : ships) {
+            Iterator<int[]> iterator = ship.shipParts.iterator();
+            while (iterator.hasNext()) {
+                int[] part = iterator.next();
+                if (playerBoard[part[0]][part[1]].equals("X")) {
+                    iterator.remove();
+                    if (ship.shipParts.isEmpty()) {
+                        ships.remove(ship);
+                        sunkenShip = true;
+                        break;
+                    }
+                }
+            }
+            if (sunkenShip) {
+                break;
+            }
+        }
+        return sunkenShip;
     }
 
     private boolean isWin() {
@@ -239,14 +263,22 @@ public class Player {
     }
 
     void shootTheShips() {
-        System.out.println("Take a shot!");
-        int[] fireCoordinates = validateHitCoordinates();
-        boolean hit = checkHit(fireCoordinates);
         printBoard(fogOfWar);
-        if (hit) {
-            System.out.println("You hit a ship! Try again: \n");
-        } else {
-            System.out.println("You missed. Try again \n");
+        System.out.println("Take a shot!");
+        while(!isWin()) {
+            int[] fireCoordinates = validateHitCoordinates();
+            boolean hit = checkHit(fireCoordinates);
+            printBoard(fogOfWar);
+            if (isShipSunk()) {
+                System.out.println("You sank a ship! ");
+            } else {
+                if (hit) {
+                    System.out.println("You hit a ship! Try again:\n");
+                } else {
+                    System.out.println("You missed. Try again:\n");
+                }
+            }
         }
+        System.out.println("You sank the last ship. You won. Congratulations!");
     }
 }
