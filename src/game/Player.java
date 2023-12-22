@@ -211,11 +211,9 @@ public class Player {
         }
         return checkedCoordinates;
     }
-
-    //TODO check for hits on the enemy's board instead of the one of the same player
-    private boolean checkHit(int[] fireCoordinates) {
+    private boolean checkHit(int[] fireCoordinates, String[][] otherPlayersBoard) {
         boolean hit = false;
-        if (playerBoard[fireCoordinates[0]][fireCoordinates[1]].equals("O") || playerBoard[fireCoordinates[0]][fireCoordinates[1]].equals("X")) {
+        if (otherPlayersBoard[fireCoordinates[0]][fireCoordinates[1]].equals("O") || otherPlayersBoard[fireCoordinates[0]][fireCoordinates[1]].equals("X")) {
             playerBoard[fireCoordinates[0]][fireCoordinates[1]] = "X";
             fogOfWar[fireCoordinates[0]][fireCoordinates[1]] = "X";
             hit = true;
@@ -226,16 +224,16 @@ public class Player {
         return hit;
     }
 
-    private boolean isShipSunk() {
+    private boolean isShipSunk(List<Ship> enemyShips, String[][] enemyBoard) {
         boolean sunkenShip = false;
-        for (Ship ship : ships) {
+        for (Ship ship : enemyShips) {
             Iterator<int[]> iterator = ship.shipParts.iterator();
             while (iterator.hasNext()) {
                 int[] part = iterator.next();
-                if (playerBoard[part[0]][part[1]].equals("X")) {
+                if (enemyBoard[part[0]][part[1]].equals("X")) {
                     iterator.remove();
                     if (ship.shipParts.isEmpty()) {
-                        ships.remove(ship);
+                        enemyShips.remove(ship);
                         sunkenShip = true;
                         break;
                     }
@@ -248,10 +246,10 @@ public class Player {
         return sunkenShip;
     }
 
-    private boolean isWin() {
+    private boolean isWin(String[][] enemyBoard) {
 
         boolean isWin = true;
-        for (String[] rows : playerBoard) {
+        for (String[] rows : enemyBoard) {
             for (String column : rows) {
                 if (column.equals("O")) {
                     isWin = false;
@@ -262,14 +260,15 @@ public class Player {
         return isWin;
     }
 
-    void shootTheShips() {
+    //TODO only check one hit at a time
+    void shootTheShips(String[][] enemyBoard, List<Ship> enemyShips) {
         printBoard(fogOfWar);
         System.out.println("Take a shot!");
-        while(!isWin()) {
+        while(!isWin(enemyBoard)) {
             int[] fireCoordinates = validateHitCoordinates();
-            boolean hit = checkHit(fireCoordinates);
+            boolean hit = checkHit(fireCoordinates, enemyBoard);
             printBoard(fogOfWar);
-            if (isShipSunk()) {
+            if (isShipSunk(enemyShips, enemyBoard)) {
                 System.out.println("You sank a ship! ");
             } else {
                 if (hit) {
