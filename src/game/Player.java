@@ -27,7 +27,7 @@ public class Player {
 
 
         for (int i = 0; i < ships.size(); i++) {
-            System.out.println("Enter the coordinates of the " + ships.get(i).name + " (" + ships.get(i).length + " cells)");
+            System.out.println("Enter the coordinates of the " + ships.get(i).name + " (" + ships.get(i).length + " cells)\n");
             int[][] shipCoordinates = validateTwoCoordinates();
             int[] start = shipCoordinates[0];
             int[] end = shipCoordinates[1];
@@ -260,24 +260,29 @@ public class Player {
         return isWin;
     }
 
-    //TODO only check one hit at a time
-    void shootTheShips(String[][] enemyBoard, List<Ship> enemyShips) {
+    boolean shootTheShips(String[][] enemyBoard, List<Ship> enemyShips, boolean win) {
+        win = false;
         printBoard(fogOfWar);
-        System.out.println("Take a shot!");
-        while(!isWin(enemyBoard)) {
-            int[] fireCoordinates = validateHitCoordinates();
-            boolean hit = checkHit(fireCoordinates, enemyBoard);
-            printBoard(fogOfWar);
-            if (isShipSunk(enemyShips, enemyBoard)) {
-                System.out.println("You sank a ship! ");
+        System.out.println("---------------------");
+        printBoard(playerBoard);
+
+        int[] fireCoordinates = validateHitCoordinates();
+        boolean hit = checkHit(fireCoordinates, enemyBoard);
+        printBoard(fogOfWar);
+        if (isShipSunk(enemyShips, enemyBoard)) {
+            System.out.println("You sank a ship! ");
+        } else {
+            if (isWin(enemyBoard)) {
+                System.out.println("You sank the last ship. You won. Congratulations!");
+                win = true;
             } else {
                 if (hit) {
-                    System.out.println("You hit a ship! Try again:\n");
+                    System.out.println("You hit a ship!\n");
                 } else {
-                    System.out.println("You missed. Try again:\n");
+                    System.out.println("You missed.\n");
                 }
             }
         }
-        System.out.println("You sank the last ship. You won. Congratulations!");
+        return win;
     }
 }
