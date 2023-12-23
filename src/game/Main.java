@@ -22,7 +22,11 @@ public class Main {
         boolean win = false;
         while (!win) {
             win = player1.shootTheShips(player2.playerBoard, player2.ships, win,"Player 1");
+            System.out.println("Press Enter and pass the move to another player\n...");
+            scanner.nextLine();
             win = player2.shootTheShips(player1.playerBoard, player1.ships, win, "Player 2");
+            System.out.println("Press Enter and pass the move to another player\n...");
+            scanner.nextLine();
         }
     }
 }

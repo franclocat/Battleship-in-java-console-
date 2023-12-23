@@ -33,7 +33,7 @@ public class Player {
             int[] end = shipCoordinates[1];
             int length = getLength(start, end);
             if (length != ships.get(i).length) {
-                System.out.println("Wrong ship length!");
+                System.out.println("Error! Wrong length of the Submarine! Try again:");
                 i -= 1;
             } else {
                 String direction = isHorizontalOrVertical(start, end);
@@ -43,7 +43,7 @@ public class Player {
                     updateShipsInBoard(i, length, shipCoordinates);
                     printBoard(playerBoard);
                 } else {
-                    System.out.println("Error: Too close to another ship!");
+                    System.out.println("Error! You placed it too close to another one. Try again:");
                     i -= 1;
                 }
             }
@@ -264,6 +264,7 @@ public class Player {
         printBoard(fogOfWar);
         System.out.println("---------------------");
         printBoard(playerBoard);
+        System.out.println();
         System.out.println(turn + ", it's your turn:\n");
 
         int[] fireCoordinates = validateHitCoordinates();
