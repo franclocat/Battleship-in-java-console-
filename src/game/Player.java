@@ -214,11 +214,11 @@ public class Player {
     private boolean checkHit(int[] fireCoordinates, String[][] otherPlayersBoard) {
         boolean hit = false;
         if (otherPlayersBoard[fireCoordinates[0]][fireCoordinates[1]].equals("O") || otherPlayersBoard[fireCoordinates[0]][fireCoordinates[1]].equals("X")) {
-            playerBoard[fireCoordinates[0]][fireCoordinates[1]] = "X";
+            otherPlayersBoard[fireCoordinates[0]][fireCoordinates[1]] = "X";
             fogOfWar[fireCoordinates[0]][fireCoordinates[1]] = "X";
             hit = true;
         } else {
-            playerBoard[fireCoordinates[0]][fireCoordinates[1]] = "M";
+            otherPlayersBoard[fireCoordinates[0]][fireCoordinates[1]] = "M";
             fogOfWar[fireCoordinates[0]][fireCoordinates[1]] = "M";
         }
         return hit;
@@ -260,27 +260,24 @@ public class Player {
         return isWin;
     }
 
-    boolean shootTheShips(String[][] enemyBoard, List<Ship> enemyShips, boolean win) {
-        win = false;
+    boolean shootTheShips(String[][] enemyBoard, List<Ship> enemyShips, boolean win, String turn) {
         printBoard(fogOfWar);
         System.out.println("---------------------");
         printBoard(playerBoard);
+        System.out.println(turn + ", it's your turn:\n");
 
         int[] fireCoordinates = validateHitCoordinates();
         boolean hit = checkHit(fireCoordinates, enemyBoard);
-        printBoard(fogOfWar);
-        if (isShipSunk(enemyShips, enemyBoard)) {
+        if (isWin(enemyBoard)) {
+            System.out.println("You sank the last ship. You won. Congratulations!");
+            win = true;
+        } else if (isShipSunk(enemyShips, enemyBoard)) {
             System.out.println("You sank a ship! ");
         } else {
-            if (isWin(enemyBoard)) {
-                System.out.println("You sank the last ship. You won. Congratulations!");
-                win = true;
+            if (hit) {
+                System.out.println("You hit a ship!\n");
             } else {
-                if (hit) {
-                    System.out.println("You hit a ship!\n");
-                } else {
-                    System.out.println("You missed.\n");
-                }
+                System.out.println("You missed.\n");
             }
         }
         return win;
